@@ -1,0 +1,43 @@
+# farukalmahmud.online — Hostinger (LiteSpeed / Apache)
+
+# ── HTTPS + canonical host (no www) ───────────────────────────
+RewriteEngine On
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://farukalmahmud.online%{REQUEST_URI} [L,R=301]
+
+# ── never serve repo / tooling files ──────────────────────────
+RedirectMatch 404 /\.git
+RedirectMatch 404 ^/tools/
+RedirectMatch 404 ^/README\.md$
+
+# ── correct MIME type for ES modules ──────────────────────────
+AddType application/javascript .js .mjs
+AddType image/svg+xml .svg
+
+# ── compression ───────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript text/javascript application/json image/svg+xml
+</IfModule>
+
+# ── caching ───────────────────────────────────────────────────
+# HTML: always revalidate so updates show immediately.
+# CSS/JS: short cache — filenames aren't hashed, so keep it to an hour.
+# Images/fonts: a month.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|webp|svg|ico|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  # light security headers (safe for this static site)
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>

@@ -1,0 +1,5 @@
+# kept out of the deploy zip (git archive)
+tools/ export-ignore
+README.md export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore

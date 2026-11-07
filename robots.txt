@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# After deploying, add: Sitemap: https://YOUR-DOMAIN/sitemap.xml
+Sitemap: https://farukalmahmud.online/sitemap.xml

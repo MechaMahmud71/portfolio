@@ -47,6 +47,37 @@ js/palette.js   ⌘K command palette
 js/notes.js     notebook / writing
 ```
 
-## Deploy
+## Deploy — https://farukalmahmud.online
 
-Static files only — drag the folder into Netlify, or push to GitHub and enable Pages.
+Build a clean upload package (only the site files — no `tools/`, README or git data):
+
+```bash
+git archive -o dist/farukalmahmud-site.zip HEAD
+```
+
+### A. Hostinger web hosting (domain + hosting plan)
+
+1. hPanel → **Websites** → make sure `farukalmahmud.online` is added as a website
+   (a "parked domain" page means no hosting is attached yet).
+2. **File Manager** → `public_html/` → delete Hostinger's default files →
+   upload `dist/farukalmahmud-site.zip` → right-click → **Extract** here.
+   `index.html` must sit directly in `public_html/`.
+3. hPanel → **Security → SSL** → make sure SSL is active.
+   `.htaccess` already redirects http/www → `https://farukalmahmud.online`.
+
+*(Alternative: hPanel → Advanced → **Git** can deploy straight from a GitHub repo.)*
+
+### B. Domain only (free hosting elsewhere, DNS at Hostinger)
+
+- **GitHub Pages:** push this repo, enable Pages, set custom domain `farukalmahmud.online`.
+  Hostinger DNS: `A @` → 185.199.108.153 · 185.199.109.153 · 185.199.110.153 · 185.199.111.153,
+  `CNAME www` → `mechamahmud71.github.io`.
+- **Netlify:** drag the folder in, add the custom domain.
+  Hostinger DNS: `A @` → 75.2.60.5, `CNAME www` → `<your-site>.netlify.app`.
+
+(`.htaccess` only applies on Hostinger; GitHub Pages / Netlify handle HTTPS themselves.)
+
+### After it's live
+
+- Paste the URL into LinkedIn's **Post Inspector** to refresh the preview card.
+- Add the site in **Google Search Console** and submit `sitemap.xml`.
