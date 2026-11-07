@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Social preview card (1200×630). Regenerate assets/og-card.png with:
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
+    --window-size=1200,630 --hide-scrollbars --virtual-time-budget=4000 \
+    --screenshot=assets/og-card.png "http://127.0.0.1:5173/tools/og-card.html"
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OG card</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600&display=block" rel="stylesheet">
+<style>
+  :root { --bg: #0a1626; --ink: #cfe0f7; --muted: #a8bad3; --accent: #ff8a3d; --line: rgba(160, 196, 245, 0.46); }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); }
+  body {
+    position: relative; font-family: 'IBM Plex Sans', sans-serif; color: var(--ink);
+    background:
+      linear-gradient(rgba(160, 196, 245, 0.08) 1px, transparent 1px) 0 0 / 120px 120px,
+      linear-gradient(90deg, rgba(160, 196, 245, 0.08) 1px, transparent 1px) 0 0 / 120px 120px,
+      linear-gradient(rgba(160, 196, 245, 0.035) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, rgba(160, 196, 245, 0.035) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--bg);
+  }
+  .sheet { position: absolute; inset: 18px; border: 1px solid rgba(160, 196, 245, 0.35); }
+  .sheet::before, .sheet::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 8px;
+    background: repeating-linear-gradient(90deg, rgba(160, 196, 245, 0.5) 0 1px, transparent 1px 120px);
+  }
+  .sheet::before { top: 0; } .sheet::after { bottom: 0; }
+  .content { position: absolute; left: 84px; top: 92px; width: 640px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 12px; padding: 8px 14px;
+    border: 1px solid var(--line); font: 500 17px 'IBM Plex Mono', monospace; letter-spacing: 0.12em;
+  }
+  .tag i { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  h1 {
+    margin-top: 30px; font: 600 98px/0.92 'IBM Plex Sans Condensed', sans-serif;
+    text-transform: uppercase; color: #fff; letter-spacing: 0.005em;
+  }
+  .dim { display: flex; align-items: center; gap: 14px; margin-top: 26px; font: 500 16px 'IBM Plex Mono', monospace; letter-spacing: 0.14em; }
+  .dim b { position: relative; flex: 1; height: 1px; background: var(--ink); opacity: 0.75; }
+  .dim b::after { content: ''; position: absolute; top: -8px; width: 1px; height: 17px; background: var(--ink); }
+  .dim b:first-child::after { left: 0; } .dim b:last-child::after { right: 0; }
+  .role { margin-top: 26px; font: 600 26px 'IBM Plex Mono', monospace; color: var(--accent); }
+  .stack { margin-top: 14px; font: 400 21px 'IBM Plex Sans', sans-serif; color: var(--muted); }
+  .graph { position: absolute; right: 70px; top: 96px; width: 400px; height: 400px; color: var(--ink); }
+  .graph .s { fill: none; stroke: currentColor; stroke-width: 1.4; }
+  .graph .a { stroke: var(--accent); }
+  .graph .f { fill: var(--accent); }
+  .block {
+    position: absolute; right: 40px; bottom: 40px; display: flex;
+    border: 1px solid var(--line); background: var(--bg);
+    font: 500 15px 'IBM Plex Mono', monospace; letter-spacing: 0.08em; color: var(--muted);
+  }
+  .block span { padding: 10px 16px; }
+  .block span + span { border-left: 1px solid var(--line); }
+  .block b { color: var(--accent); font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="sheet"></div>
+  <div class="content">
+    <span class="tag"><i></i>PROJECT LEAD @ SOFOF TECH · DHAKA</span>
+    <h1>MD Faruk<br>Al Mahmud</h1>
+    <div class="dim"><b></b>MECH. ENG. → SOFTWARE · 5+ YRS<b></b></div>
+    <p class="role">&gt; Senior Backend Engineer</p>
+    <p class="stack">Node.js · NestJS · TypeScript · PostgreSQL · MongoDB · Redis · AWS</p>
+  </div>
+
+  <!-- wireframe service mesh, drawn like the site's 3D core -->
+  <svg class="graph" viewBox="0 0 400 400" aria-hidden="true">
+    <circle class="s" cx="200" cy="200" r="150" opacity="0.35"/>
+    <ellipse class="s a" cx="200" cy="200" rx="128" ry="52" transform="rotate(-24 200 200)" opacity="0.8"/>
+    <polygon class="s" points="200,128 262,164 262,236 200,272 138,236 138,164"/>
+    <path class="s" d="M200,128 L200,272 M138,164 L262,236 M262,164 L138,236" opacity="0.6"/>
+    <polygon class="s a" points="200,168 228,200 200,232 172,200"/>
+    <circle class="f" cx="200" cy="200" r="11"/>
+    <g class="s">
+      <path d="M200,200 L80,92 M200,200 L318,86 M200,200 L344,226 M200,200 L300,330 M200,200 L96,318 M200,200 L56,206" opacity="0.35"/>
+      <path d="M80,92 L318,86 L344,226 L300,330 L96,318 L56,206 Z" opacity="0.25"/>
+    </g>
+    <g class="s">
+      <rect x="70" y="82" width="20" height="20" transform="rotate(45 80 92)"/>
+      <rect x="308" y="76" width="20" height="20" transform="rotate(45 318 86)"/>
+      <rect x="334" y="216" width="20" height="20" transform="rotate(45 344 226)"/>
+      <rect x="86" y="308" width="20" height="20" transform="rotate(45 96 318)"/>
+      <rect x="46" y="196" width="20" height="20" transform="rotate(45 56 206)"/>
+    </g>
+    <rect class="s a" x="290" y="320" width="20" height="20" transform="rotate(45 300 330)"/>
+  </svg>
+
+  <div class="block"><span>DWG FA-2026 · REV 5.0</span><span><b>●</b> SYS.ONLINE</span></div>
+</body>
+</html>
