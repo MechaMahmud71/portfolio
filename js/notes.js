@@ -3,6 +3,7 @@
 //  circular-dependency article.
 // ─────────────────────────────────────────────────────────────
 import { ARTICLES } from './data.js';
+import { track } from './analytics.js';
 
 const root = document.getElementById('notes');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -57,6 +58,12 @@ if (root && ARTICLES.length) {
     cap.innerHTML = cyclic ? CAPTIONS.cyclic : CAPTIONS.fixed;
     btn.textContent = cyclic ? 'Break the cycle' : 'Show the cycle';
   };
-  btn.addEventListener('click', () => set(!demo.classList.contains('cyclic')));
+  btn.addEventListener('click', () => {
+    const toCyclic = !demo.classList.contains('cyclic');
+    set(toCyclic);
+    track('notebook_engaged', {}, { once: true });
+    track('notebook_toggle', { view: toCyclic ? 'cycle' : 'fixed' });
+  });
+  root.querySelector('.note-text .btn')?.addEventListener('click', () => track('notebook_article_click'));
   set(true);
 }

@@ -2,6 +2,8 @@
 //  "Fix the incident" — a simulated on-call drill.
 //  Numbers are illustrative; each correct fix links to real work.
 // ─────────────────────────────────────────────────────────────
+import { track } from './analytics.js';
+
 const root = document.getElementById('incident-app');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -159,6 +161,8 @@ function init() {
     const a = ACTIONS.find((x) => x.id === id);
     const btn = root.querySelector(`[data-act="${id}"]`);
     steps++;
+    track('drill_started', {}, { once: true });
+    track('drill_action', { fix: id, correct: a.good ? 'yes' : 'no' });
     log(a.log, a.good ? 'good' : 'meh');
     els.note.innerHTML = a.note;
     if (id === 'restart') {
@@ -173,6 +177,7 @@ function init() {
 
   function resolve() {
     resolved = true;
+    track('drill_resolved', { steps, traps: state.scale ? 'used' : 'avoided' });
     setTimeout(() => {
       log(`[alert] resolved — p95 under SLO, errors < 0.5%`, 'good');
       els.status.textContent = 'RESOLVED';
@@ -182,7 +187,7 @@ function init() {
       again.type = 'button';
       again.className = 'btn small inc-reset';
       again.textContent = 'Run the drill again';
-      again.addEventListener('click', reset);
+      again.addEventListener('click', () => { track('drill_replay'); reset(); });
       els.note.appendChild(again);
       root.querySelectorAll('.inc-act').forEach((b) => { b.disabled = true; });
     }, 900);

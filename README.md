@@ -32,6 +32,30 @@ one-page résumé — no separate PDF file to keep in sync.
 - **Print / save PDF** — printing the site always produces a one-page résumé
 - **⌘K / Ctrl+K command palette**, interactive terminal, notebook (writing)
 
+## Analytics (cookieless, off until configured)
+
+1. Sign up at **umami.is** (free hobby tier) → *Add website* → `farukalmahmud.online`.
+2. Copy its **Website ID** into `ANALYTICS.id` in [`js/data.js`](js/data.js), commit, push.
+   (GoatCounter also works: set `provider: 'goatcounter'` and your `/count` URL.)
+
+Only counts on `farukalmahmud.online` (not localhost) and respects Do-Not-Track / GPC.
+Test locally with `?debug-analytics` — events print to the console instead of being sent.
+
+| Event | Props | Answers |
+|---|---|---|
+| `section_view` | `section`: robotics · notebook · incident_drill · request_flow | how many *saw* it |
+| `robot_engaged` | `robot`: line · sumo · voice · iot (once per visit) | how many *used* each robot |
+| `robot_action` | `robot`, `action` | which controls get pressed |
+| `robot_orbit` | `robot` (once) | who explored the 3D view |
+| `sumo_win` | `seconds` | who watched a full fight |
+| `notebook_engaged` / `notebook_toggle` | `view` | who tried the diagram |
+| `notebook_article_click` | — | who went on to read the article |
+| `drill_started` / `drill_action` | `fix`, `correct` | who played the incident drill, which fixes |
+| `drill_resolved` | `steps`, `traps` | who solved it (and whether they fell for a trap) |
+| `quick_view_open` · `resume_print` | `via` | recruiter signals |
+
+Engagement rate = `robot_engaged` (or `notebook_engaged`, `drill_started`) ÷ matching `section_view`.
+
 ## Structure
 
 ```
@@ -45,6 +69,8 @@ js/incident.js  on-call drill
 js/quick.js     recruiter quick view + print layout
 js/palette.js   ⌘K command palette
 js/notes.js     notebook / writing
+js/origin.js    robotics → software chapter (interactive 3D drawings)
+js/analytics.js cookieless event tracking (Umami / GoatCounter)
 ```
 
 ## Deploy — https://farukalmahmud.online

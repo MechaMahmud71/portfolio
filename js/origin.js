@@ -7,6 +7,7 @@
 //  .s = stroked part · .a = accent · .t = annotation · .m = motion path (invisible)
 // ─────────────────────────────────────────────────────────────
 import { ORIGIN, ORIGIN_PATH } from './data.js';
+import { track } from './analytics.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const NS = 'http://www.w3.org/2000/svg';
@@ -168,6 +169,7 @@ const SCENES = {
           if (state === 'done') {
             labels.forEach((l) => l.classList.remove('on'));
             ctx.readout(`WIN · opponent out in ${t.toFixed(1)}s`);
+            track('sumo_win', { seconds: Math.round(t) });
             return false;
           }
           ctx.readout(`STATE ${state.toUpperCase()} · t ${t.toFixed(1)}s`);
@@ -504,6 +506,7 @@ function initCard(card) {
   }
   stage.addEventListener('pointermove', (e) => {
     if (!card.classList.contains('is3d') || e.pointerType === 'touch') return;
+    track('robot_orbit', { robot: card.dataset.robot }, { once: true });
     const r = stage.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
@@ -521,6 +524,9 @@ function initCard(card) {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const act = b.dataset.act;
+    const robot = card.dataset.robot;
+    track('robot_engaged', { robot }, { once: true });
+    track('robot_action', { robot, action: act });
     if (act === 'view') { set3d(!card.classList.contains('is3d')); return; }
     ctrl.sim.action(act);
   });

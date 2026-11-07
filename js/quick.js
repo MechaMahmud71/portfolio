@@ -4,6 +4,7 @@
 //  Printing the site always prints this summary (a résumé on demand).
 // ─────────────────────────────────────────────────────────────
 import { PROFILE, EXPERIENCE, PROJECTS, SKILLS, SKILL_CATEGORIES, EDUCATION, HIGHLIGHTS, ORIGIN, SOFOF_PROJECTS } from './data.js';
+import { track } from './analytics.js';
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const panel = document.getElementById('quick');
@@ -82,7 +83,7 @@ function init() {
   panel.addEventListener('click', (e) => {
     const q = e.target.closest('[data-q]')?.dataset.q;
     if (q === 'close') close();
-    if (q === 'print') window.print();
+    if (q === 'print') { track('resume_print', { via: 'quick_view' }); window.print(); }
   });
   panel.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { e.stopPropagation(); close(); }
@@ -91,7 +92,7 @@ function init() {
 
   document.querySelectorAll('[data-quick-open]').forEach((b) => b.addEventListener('click', open));
   addEventListener('quick:open', open);
-  addEventListener('quick:print', () => { open(); setTimeout(() => window.print(), 250); });
+  addEventListener('quick:print', () => { track('resume_print', { via: 'button' }); open(); setTimeout(() => window.print(), 250); });
 
   const params = new URLSearchParams(location.search);
   if (params.get('view') === 'quick') open();
@@ -100,6 +101,7 @@ function init() {
 function open() {
   if (!panel.hidden) return;
   lastFocus = document.activeElement;
+  track('quick_view_open', { via: new URLSearchParams(location.search).get('view') === 'quick' ? 'link' : 'button' });
   panel.hidden = false;
   document.body.classList.add('quick-open');
   emit('scene:pause', { paused: true });

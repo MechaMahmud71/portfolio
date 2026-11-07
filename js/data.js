@@ -463,3 +463,13 @@ export const SOFOF_PROJECTS = [
 // link the products to the SOFOF Tech experience entry
 const sofofJob = EXPERIENCE.find((j) => j.company === 'SOFOF Tech');
 if (sofofJob) sofofJob.products = SOFOF_PROJECTS;
+
+// Analytics — cookieless, so no consent banner is needed. Tracking stays OFF until an ID is set.
+//   Umami Cloud:  sign up at umami.is → add website "farukalmahmud.online" → paste its Website ID below.
+//   GoatCounter:  set provider: 'goatcounter' and goatcounter: 'https://YOURCODE.goatcounter.com/count'.
+export const ANALYTICS = {
+  provider: 'umami',          // 'umami' | 'goatcounter'
+  id: '',                     // Umami Website ID (a UUID)
+  goatcounter: '',
+  domains: ['farukalmahmud.online'], // never count localhost / previews
+};
