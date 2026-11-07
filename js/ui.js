@@ -506,13 +506,9 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
+// The résumé is generated on demand: the quick view prints as a one-page PDF.
 function checkResume() {
-  const link = $('#cv-link');
-  link.href = PROFILE.resume;
-  if (location.protocol === 'file:') return;
-  fetch(PROFILE.resume, { method: 'HEAD' })
-    .then((r) => { if (!r.ok) link.remove(); })
-    .catch(() => link.remove());
+  $('#cv-link')?.addEventListener('click', () => emit('quick:print'));
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -544,7 +540,7 @@ function terminal() {
       return [`<span class="a">${esc(JSON.stringify(obj, null, 2))}</span>`];
     },
     'contact.md': () => cmds.contact(),
-    'resume.pdf': () => [['binary file — try <span class="c">open cv</span>', 'dim']],
+    'resume.pdf': () => [['generated on demand — try <span class="c">open cv</span>', 'dim']],
   };
 
   const cmds = {
@@ -640,9 +636,11 @@ function terminal() {
         linkedin: PROFILE.linkedin,
         email: `mailto:${PROFILE.email}`,
         mail: `mailto:${PROFILE.email}`,
-        cv: PROFILE.resume,
-        resume: PROFILE.resume,
       };
+      if (a === 'cv' || a === 'resume') {
+        emit('quick:print');
+        return [['opening one-page résumé → print / save as PDF …', 'ok']];
+      }
       const url = targets[a] ?? project?.url;
       if (!url) return [['usage: open github | linkedin | email | cv | zaynax | hishabpati | assunnah', 'err']];
       window.open(url, url.startsWith('mailto:') ? '_self' : '_blank', 'noopener');

@@ -15,8 +15,8 @@ npx serve .            # or: python3 -m http.server 8080
 Everything (bio, jobs, projects, skills, links) lives in [`js/data.js`](js/data.js).
 Add `node: true` to a skill to make it a node in the 3D graph.
 
-To enable the **cv.pdf** button, put your resume next to `index.html` as `resume.pdf`
-(the button hides itself when the file is missing).
+The **Résumé PDF** button (and `open cv` in the terminal) prints the Quick view as a
+one-page résumé — no separate PDF file to keep in sync.
 
 ## Features
 
