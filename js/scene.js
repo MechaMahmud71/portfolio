@@ -15,18 +15,18 @@ import { createPipeline } from './pipeline.js';
 
 // Where the mesh sits for each section.
 // nx/ny: position in screen space (-1..1), my: ny on mobile, z: depth, s: scale, l: label opacity,
-// p: visibility of the 'follow the request' pipeline
+// p: visibility of the 'follow the request' pipeline, ms: scale on phones (mesh only lives in the hero there)
 const KEYFRAMES = {
-  hero:       { nx: 0.44,  ny: 0,     my: 0.7,  z: 0,  s: 1.0,  l: 1, p: 0 },
-  about:      { nx: -0.55, ny: 0.05,  my: 0,    z: -5, s: 0.8,  l: 0, p: 0 },
-  origin:     { nx: 0.78,  ny: 0.6,   my: 0,    z: -14, s: 0.45, l: 0, p: 0 },
-  flow:       { nx: 1.6,   ny: 0.1,   my: 0,    z: -20, s: 0.01, l: 0, p: 1 },
-  experience: { nx: 0.62,  ny: -0.05, my: 0,    z: -7, s: 0.75, l: 0, p: 0 },
-  projects:   { nx: 0,     ny: 0.1,   my: 0,    z: -9, s: 0.9,  l: 0, p: 0 },
-  incident:   { nx: 0.62,  ny: 0.62,  my: 0,    z: -12, s: 0.5,  l: 0, p: 0 },
-  skills:     { nx: -0.47, ny: -0.2,  my: 0,    z: 0,  s: 0.84, l: 1, p: 0 },
-  terminal:   { nx: 0.6,   ny: -0.05, my: 0,    z: -5, s: 0.8,  l: 0, p: 0 },
-  contact:    { nx: 0,     ny: -0.95, my: -0.8, z: -3, s: 1.25, l: 0, p: 0 },
+  hero:       { nx: 0.44,  ny: 0,     my: 0.7,  z: 0,  s: 1.0,  l: 1, p: 0, ms: 1 },
+  about:      { nx: -0.55, ny: 0.05,  my: 0,    z: -5, s: 0.8,  l: 0, p: 0, ms: 0 },
+  origin:     { nx: 0.78,  ny: 0.6,   my: 0,    z: -14, s: 0.45, l: 0, p: 0, ms: 0 },
+  flow:       { nx: 1.6,   ny: 0.1,   my: 0,    z: -20, s: 0.01, l: 0, p: 1, ms: 0 },
+  experience: { nx: 0.62,  ny: -0.05, my: 0,    z: -7, s: 0.75, l: 0, p: 0, ms: 0 },
+  projects:   { nx: 0,     ny: 0.1,   my: 0,    z: -9, s: 0.9,  l: 0, p: 0, ms: 0 },
+  incident:   { nx: 0.62,  ny: 0.62,  my: 0,    z: -12, s: 0.5,  l: 0, p: 0, ms: 0 },
+  skills:     { nx: -0.47, ny: -0.2,  my: 0,    z: 0,  s: 0.84, l: 1, p: 0, ms: 0 },
+  terminal:   { nx: 0.6,   ny: -0.05, my: 0,    z: -5, s: 0.8,  l: 0, p: 0, ms: 0 },
+  contact:    { nx: 0,     ny: -0.95, my: -0.8, z: -3, s: 1.25, l: 0, p: 0, ms: 0 },
 };
 
 const BG = 0x05070d;
@@ -487,7 +487,7 @@ function start() {
   measure();
   new ResizeObserver(measure).observe(document.body);
 
-  const cur = { nx: 0.44, ny: 0, my: 0.36, z: -10, s: 0.001, l: 0, p: 0 };
+  const cur = { nx: 0.44, ny: 0, my: 0.36, z: -10, s: 0.001, l: 0, p: 0, ms: 1 };
   const tgt = { ...cur };
   function computeTarget() {
     const mid = scrollY + innerHeight / 2;
@@ -527,6 +527,7 @@ function start() {
   // pause rendering while an overlay (quick view) covers the scene
   let paused = false;
   let shown = false;
+  let idleRendered = false;
   addEventListener('scene:pause', (e) => { paused = !!e.detail?.paused; clock.getDelta(); });
 
   renderer.setAnimationLoop(() => {
@@ -548,7 +549,9 @@ function start() {
     const nxEff = cur.nx + Math.sign(cur.nx) * (1 - widthFit) * 0.2;
     system.position.set(small ? 0 : nxEff * halfW, (small ? cur.my : cur.ny) * halfH, cur.z);
     const fit = small ? Math.min(0.62, camera.aspect * 0.75) : Math.min(widthFit, camera.aspect < 1.35 ? 0.85 : 1);
-    system.scale.setScalar(Math.max(cur.s, 0.001) * fit);
+    const sNow = small ? cur.ms : cur.s;
+    system.scale.setScalar(Math.max(sNow, 0.001) * fit);
+    system.visible = sNow > 0.01; // fully gone (no bloom speck) once shrunk away
 
     // pipeline lives at depth 0, anchored to the centre of the .flow-stage box so it
     // scrolls in with its section (never over the heading) and then stays put while sticky
@@ -657,7 +660,11 @@ function start() {
     canvas.classList.toggle('pointing', hovered !== -1 && !dragging);
 
     // render
-    if (useBloom) composer.render(); else renderer.render(scene, camera);
+    const idleOnPhone = small && sNow < 0.004 && cur.p < 0.01 && flash < 0.01;
+    if (!idleOnPhone || !idleRendered) {
+      if (useBloom) composer.render(); else renderer.render(scene, camera);
+    }
+    idleRendered = idleOnPhone;
     if (!shown) {
       shown = true;
       performance.mark('scene-ready');
@@ -696,7 +703,8 @@ function start() {
 
   function updateLabels() {
     // labels fade out with the mesh when it shrinks away (e.g. during the flow section)
-    const alpha = clamp(cur.l, 0, 1) * clamp((cur.s - 0.1) * 3, 0, 1);
+    const sNow = isSmall() ? cur.ms : cur.s;
+    const alpha = clamp(cur.l, 0, 1) * clamp((sNow - 0.1) * 3, 0, 1);
     if (alpha < 0.02) {
       if (labelLayer.style.visibility !== 'hidden') labelLayer.style.visibility = 'hidden';
       return;

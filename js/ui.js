@@ -177,7 +177,8 @@ function highlight(text) {
 }
 
 function renderExperience() {
-  const VISIBLE = 3;
+  // phones show fewer bullets per role before "+ more"
+  const VISIBLE = matchMedia('(max-width: 900px)').matches ? 2 : 3;
   $('#timeline').innerHTML = EXPERIENCE.map((job, i) => {
     const points = job.points ?? [];
     const stack = job.stack ?? [];
